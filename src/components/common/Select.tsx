@@ -105,7 +105,7 @@ export const Select = React.forwardRef<HTMLDivElement, SelectProps>(
           {/* Dropdown Menu */}
           <div
             className={cn(
-              "absolute z-50 mt-2 w-full rounded-lg border border-[rgba(255,255,255,0.1)] bg-[#13151f] py-1 shadow-lg shadow-black/50 backdrop-blur-xl origin-top transition-all duration-200 ease-out",
+              "absolute z-100 mt-2 w-full rounded-lg border border-[rgba(255,255,255,0.1)] bg-[#0a0b10] py-1 shadow-2xl shadow-black origin-top transition-all duration-200 ease-out",
               isOpen
                 ? "opacity-100 scale-100 visible"
                 : "opacity-0 scale-95 invisible"

@@ -78,7 +78,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
       )}
 
       {/* Section: Personal Info */}
-      <div className='space-y-2'>
+      <div className='space-y-2 relative z-30'>
         <h3 className='text-xs font-semibold uppercase tracking-widest text-gray-500 mb-4'>
           Personal Information
         </h3>
@@ -108,7 +108,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
       </div>
 
       {/* Section: Role */}
-      <div className='space-y-2'>
+      <div className='space-y-2 relative z-20'>
         <h3 className='text-xs font-semibold uppercase tracking-widest text-gray-500 mb-4'>
           Professional Details
         </h3>
@@ -131,7 +131,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
       </div>
 
       {/* Section: Preferences */}
-      <div className='space-y-2'>
+      <div className='space-y-2 relative z-10'>
         <h3 className='text-xs font-semibold uppercase tracking-widest text-gray-500 mb-4'>
           Preferences
         </h3>
@@ -146,7 +146,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
       </div>
 
       {/* Footer: Status + Submit */}
-      <div className='pt-6 mt-4 border-t border-[rgba(255,255,255,0.06)] flex flex-col sm:flex-row items-center justify-between gap-4'>
+      <div className='relative z-0 pt-6 mt-4 border-t border-[rgba(255,255,255,0.06)] flex flex-col sm:flex-row items-center justify-between gap-4'>
         <div className='flex items-center text-xs text-gray-500 min-h-[24px] gap-2'>
           {isSaving ? (
             <span className='flex items-center text-[#6d28d9] font-medium animate-pulse-slow gap-2'>
