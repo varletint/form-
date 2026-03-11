@@ -1,4 +1,4 @@
-import React, { type InputHTMLAttributes } from "react";
+import React, { useId, type InputHTMLAttributes } from "react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -14,9 +14,8 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, label, error, helperText, id, ...props }, ref) => {
-    const inputId =
-      id ||
-      Array.from({ length: 8 }, () => Math.random().toString(36)[2]).join("");
+    const generatedId = useId();
+    const inputId = id || generatedId;
 
     return (
       <div className='flex flex-col gap-1.5 w-full group'>

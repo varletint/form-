@@ -1,4 +1,4 @@
-import React, { type InputHTMLAttributes } from "react";
+import React, { useId, type InputHTMLAttributes } from "react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -14,9 +14,8 @@ export interface CheckboxProps extends InputHTMLAttributes<HTMLInputElement> {
 
 export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
   ({ className, label, description, error, id, ...props }, ref) => {
-    const inputId =
-      id ||
-      Array.from({ length: 8 }, () => Math.random().toString(36)[2]).join("");
+    const generatedId = useId();
+    const inputId = id || generatedId;
 
     return (
       <div className='flex items-start gap-3 w-full group cursor-pointer'>

@@ -116,7 +116,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
           <Select
             label='Primary Role'
             value={(answers.role as string) || ""}
-            onChange={(e) => handleChange("role", e.target.value)}
+            onChange={(val: string) => handleChange("role", val)}
             error={errors.role}
             options={[
               { value: "developer", label: "Software Developer" },
