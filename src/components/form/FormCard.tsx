@@ -22,15 +22,22 @@ export const FormCard: React.FC<FormCardProps> = ({
   return (
     <div
       className={cn(
-        "glass-panel w-full max-w-2xl mx-auto p-6 md:p-8 flex flex-col",
+        "glass-panel w-full max-w-2xl mx-auto p-8 md:p-10 flex flex-col",
+        "hover:border-[rgba(255,255,255,0.15)] transition-all duration-300",
         className
       )}>
       {(title || description) && (
-        <div className='mb-6 border-b border-[rgba(255,255,255,0.1)] pb-4'>
+        <div className='mb-8 pb-6 border-b border-[rgba(255,255,255,0.08)]'>
           {title && (
-            <h2 className='text-2xl font-bold text-white mb-2'>{title}</h2>
+            <h2 className='text-2xl font-bold text-white mb-2 tracking-tight'>
+              {title}
+            </h2>
           )}
-          {description && <p className='text-gray-400'>{description}</p>}
+          {description && (
+            <p className='text-[15px] text-gray-400 leading-relaxed'>
+              {description}
+            </p>
+          )}
         </div>
       )}
       <div className='flex-1'>{children}</div>

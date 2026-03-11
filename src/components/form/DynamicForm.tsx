@@ -1,12 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Input } from "../common/Input";
 import { Select } from "../common/Select";
 import { Checkbox } from "../common/Checkbox";
 import { Button } from "../common/Button";
+import { Save, Send } from "lucide-react";
 
 interface DynamicFormProps {
-  answers: Record<string, any>;
-  updateAnswers: (answers: Record<string, any>) => void;
+  answers: Record<string, string | boolean | undefined>;
+  updateAnswers: (
+    answers: Record<string, string | boolean | undefined>
+  ) => void;
   onSubmit: () => Promise<boolean>;
   isSaving: boolean;
   isSubmitting: boolean;
@@ -25,14 +28,19 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
 }) => {
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Real-time validation could go here, but we'll stick to validating on submit for simplicity,
-  // or simple HTML required validation.
-
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    if (!answers.fullName?.trim()) newErrors.fullName = "Full Name is required";
-    if (!answers.email?.trim()) newErrors.email = "Email Address is required";
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(answers.email)) {
+    const fullName = answers.fullName;
+    const email = answers.email;
+
+    if (!fullName || (typeof fullName === "string" && !fullName.trim()))
+      newErrors.fullName = "Full Name is required";
+    if (!email || (typeof email === "string" && !email.trim()))
+      newErrors.email = "Email Address is required";
+    else if (
+      typeof email === "string" &&
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+    ) {
       newErrors.email = "Please enter a valid email address";
     }
     if (!answers.role) newErrors.role = "Please select a role";
@@ -48,77 +56,113 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
     }
   };
 
-  const handleChange = (field: string, value: any) => {
+  const handleChange = (field: string, value: string | boolean) => {
     updateAnswers({ [field]: value });
-    // Clear error for the field being typed in
     if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: undefined } as any));
+      const next = { ...errors };
+      delete next[field];
+      setErrors(next);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className='space-y-6 animate-fade-in'>
+    <form onSubmit={handleSubmit} className='space-y-8'>
+      {/* Server error banner */}
       {serverError && (
-        <div className='p-3 mb-6 rounded-md bg-[rgba(239,68,68,0.1)] border border-red-500 text-red-400 text-sm'>
-          {serverError}
+        <div className='flex items-start gap-3 p-4 rounded-lg bg-[rgba(239,68,68,0.08)] border border-red-500/30 animate-fade-in'>
+          <div className='shrink-0 mt-0.5 w-5 h-5 rounded-full bg-red-500/20 flex items-center justify-center'>
+            <span className='text-red-400 text-xs font-bold'>!</span>
+          </div>
+          <p className='text-sm text-red-300 leading-relaxed'>{serverError}</p>
         </div>
       )}
 
-      <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-        <Input
-          label='Full Name'
-          placeholder='Jane Doe'
-          value={answers.fullName || ""}
-          onChange={(e) => handleChange("fullName", e.target.value)}
-          error={errors.fullName}
-          required
-        />
-        <Input
-          label='Email Address'
-          type='email'
-          placeholder='jane@example.com'
-          value={answers.email || ""}
-          onChange={(e) => handleChange("email", e.target.value)}
-          error={errors.email}
-          required
-        />
+      {/* Section: Personal Info */}
+      <div className='space-y-2'>
+        <h3 className='text-xs font-semibold uppercase tracking-widest text-gray-500 mb-4'>
+          Personal Information
+        </h3>
+        <div className='grid grid-cols-1 md:grid-cols-2 gap-5'>
+          <div className='animate-fade-in-up stagger-1'>
+            <Input
+              label='Full Name'
+              placeholder='Jane Doe'
+              value={(answers.fullName as string) || ""}
+              onChange={(e) => handleChange("fullName", e.target.value)}
+              error={errors.fullName}
+              required
+            />
+          </div>
+          <div className='animate-fade-in-up stagger-2'>
+            <Input
+              label='Email Address'
+              type='email'
+              placeholder='jane@example.com'
+              value={(answers.email as string) || ""}
+              onChange={(e) => handleChange("email", e.target.value)}
+              error={errors.email}
+              required
+            />
+          </div>
+        </div>
       </div>
 
-      <Select
-        label='Primary Role'
-        value={answers.role || ""}
-        onChange={(e) => handleChange("role", e.target.value)}
-        error={errors.role}
-        options={[
-          { value: "developer", label: "Software Developer" },
-          { value: "designer", label: "UI/UX Designer" },
-          { value: "product", label: "Product Manager" },
-          { value: "other", label: "Other" },
-        ]}
-      />
-
-      <div className='pt-2'>
-        <Checkbox
-          label='Subscribe to our newsletter'
-          description="We'll only send you the good stuff. No spam, ever."
-          checked={answers.subscribe || false}
-          onChange={(e) => handleChange("subscribe", e.target.checked)}
-        />
+      {/* Section: Role */}
+      <div className='space-y-2'>
+        <h3 className='text-xs font-semibold uppercase tracking-widest text-gray-500 mb-4'>
+          Professional Details
+        </h3>
+        <div className='animate-fade-in-up stagger-3'>
+          <Select
+            label='Primary Role'
+            value={(answers.role as string) || ""}
+            onChange={(e) => handleChange("role", e.target.value)}
+            error={errors.role}
+            options={[
+              { value: "developer", label: "Software Developer" },
+              { value: "designer", label: "UI/UX Designer" },
+              { value: "product", label: "Product Manager" },
+              { value: "data", label: "Data Scientist" },
+              { value: "devops", label: "DevOps Engineer" },
+              { value: "other", label: "Other" },
+            ]}
+          />
+        </div>
       </div>
 
-      <div className='pt-6 mt-6 border-t border-[rgba(255,255,255,0.1)] flex items-center justify-between'>
-        <div className='flex items-center text-xs text-gray-400 min-h-[20px]'>
+      {/* Section: Preferences */}
+      <div className='space-y-2'>
+        <h3 className='text-xs font-semibold uppercase tracking-widest text-gray-500 mb-4'>
+          Preferences
+        </h3>
+        <div className='animate-fade-in-up stagger-4'>
+          <Checkbox
+            label='Subscribe to our newsletter'
+            description='Weekly curated insights. No spam, unsubscribe anytime.'
+            checked={(answers.subscribe as boolean) || false}
+            onChange={(e) => handleChange("subscribe", e.target.checked)}
+          />
+        </div>
+      </div>
+
+      {/* Footer: Status + Submit */}
+      <div className='pt-6 mt-4 border-t border-[rgba(255,255,255,0.06)] flex flex-col sm:flex-row items-center justify-between gap-4'>
+        <div className='flex items-center text-xs text-gray-500 min-h-[24px] gap-2'>
           {isSaving ? (
-            <span className='flex items-center text-[#6d28d9] font-medium animate-pulse-slow'>
-              <span className='w-2 h-2 rounded-full bg-[#6d28d9] mr-2'></span>
-              Autosaving draft...
+            <span className='flex items-center text-[#6d28d9] font-medium animate-pulse-slow gap-2'>
+              <Save className='w-3.5 h-3.5' />
+              Saving draft…
             </span>
           ) : lastSaved ? (
-            <span className='text-gray-500'>
-              Last saved: {lastSaved.toLocaleTimeString()}
+            <span className='flex items-center gap-2 text-gray-500'>
+              <Save className='w-3.5 h-3.5' />
+              Saved at {lastSaved.toLocaleTimeString()}
             </span>
           ) : (
-            <span>Draft will Auto-save as you type</span>
+            <span className='flex items-center gap-2'>
+              <Save className='w-3.5 h-3.5' />
+              Auto-saves as you type
+            </span>
           )}
         </div>
 
@@ -126,7 +170,8 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
           type='submit'
           size='lg'
           isLoading={isSubmitting}
-          className='w-full md:w-auto min-w-[140px]'>
+          className='w-full sm:w-auto min-w-[160px] gap-2'>
+          <Send className='w-4 h-4' />
           Submit Form
         </Button>
       </div>
